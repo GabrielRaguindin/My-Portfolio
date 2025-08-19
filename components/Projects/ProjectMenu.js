@@ -96,8 +96,8 @@ const ProjectMenu = [
         title: "SecuSim",
         category: "Application",
         color: "info",
-        width: 370,
-        height: 370,
+        width: 350,
+        height: 350,
         details: "My Capstone Project, an interactive and comprehensible learning environment to students who are new to the concepts of computer networking through a virtual simulation.",
         technologies: [
             { icon: IoLogoJavascript, label: "JavaScript", color: "#F7DF1E" },

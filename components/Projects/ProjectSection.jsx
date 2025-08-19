@@ -10,14 +10,36 @@ export default function ProjectSection() {
     const [items, setItems] = useState(ProjectMenu);
     const [selectedProject, setSelectedProject] = useState(null);
     const [isOpenModal, setIsOpenModal] = useState(false);
+    const [isTransitioning, setIsTransitioning] = useState(false);
+    const [activeCategory, setActiveCategory] = useState("All");
 
     const filterItems = (categoryItem) => {
-        const updatedItems = ProjectMenu.filter((currentElement) => {
-            return currentElement.category === categoryItem;
-        })
+        if (activeCategory === categoryItem) return;
 
-        setItems(updatedItems);
+        setIsTransitioning(true);
+        setActiveCategory(categoryItem);
+
+        setTimeout(() => {
+            const updatedItems = ProjectMenu.filter((currentElement) => {
+                return currentElement.category === categoryItem;
+            });
+
+            setItems(updatedItems);
+            setIsTransitioning(false);
+        }, 300);
     }
+
+    const resetItems = () => {
+        if (activeCategory === "All") return;
+
+        setIsTransitioning(true);
+        setActiveCategory("All");
+
+        setTimeout(() => {
+            setItems(ProjectMenu);
+            setIsTransitioning(false);
+        }, 300);
+    };
 
     const openModal = (project) => {
         setSelectedProject(project);
@@ -36,7 +58,7 @@ export default function ProjectSection() {
                 <Breadcrumb aria-label="Breadcrumb">
                     <Breadcrumb.Item tabIndex="0"
                         className="cursor-pointer hover:underline focus:text-teal-500 focus:underline decoration-2 transition-all"
-                        onClick={() => setItems(ProjectMenu)}>All Works</Breadcrumb.Item>
+                        onClick={resetItems}>All Works</Breadcrumb.Item>
 
                     <Breadcrumb.Item tabIndex="0"
                         className="cursor-pointer hover:underline focus:text-teal-500 focus:underline decoration-2 transition-all"
@@ -49,12 +71,15 @@ export default function ProjectSection() {
             </div>
 
             <div>
-                <div className="grid grid-cols-3 justify-start gap-3">
+                <div className={`grid grid-cols-3 justify-start gap-3 transition-opacity duration-300 ease-in-out transform 
+                                ${isTransitioning ? "opacity-0 scale-95" : "opacity-100 scale-100"}`}>
                     {items.map((element) => {
                         const { id, title, category, color } = element;
                         return (
-                            <Card key={id} className="rounded-2xl shadow-lg dark:bg-neutral-900 dark:border-0">
-                                <Badge color={color} className="w-[35%] flex justify-center font-medium">{category}</Badge>
+                            <Card key={id} className="rounded-2xl shadow-lg dark:bg-neutral-900 dark:border-0 transition-transform duration-300 ease-in-out">
+                                <Badge color={color} className="w-[35%] flex justify-center font-medium">
+                                    {category}
+                                </Badge>
                                 <h1 className="text-base text-slate-700 text-left dark:text-slate-200">{title}</h1>
                                 <div className="flex justify-end">
                                     <Button outline gradientDuoTone="tealToLime"
@@ -81,7 +106,7 @@ export default function ProjectSection() {
                                     alt={selectedProject.title}
                                     width={selectedProject.width}
                                     height={selectedProject.height}
-                                    className="rounded-2xl shadow-lg"
+                                    className="rounded-xl shadow-lg"
                                 />
                             </div>
                             <div className="w-1/2 flex flex-col ml-3">
